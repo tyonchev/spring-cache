@@ -34,8 +34,7 @@ public class CommandF {
   public CompletableFuture<List<String>> execute(String appToken) {
     long start = System.currentTimeMillis();
 
-    CompletableFuture<List<String>> future = new CompletableFuture<>(()->doSomething(appToken));
-    future.run();
+    CompletableFuture<List<String>> future = CompletableFuture.supplyAsync(()->doSomething(appToken));
     logger.error("Get groups took " + (System.currentTimeMillis() - start));
     return future;
 
