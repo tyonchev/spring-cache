@@ -1,23 +1,21 @@
 package hello;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import java.time.Duration;
+import com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider;
+import hello.resilience.ListWrapper;
+import io.github.resilience4j.cache.Cache;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.concurrent.TimeUnit;
+import javax.cache.Caching;
+import javax.cache.configuration.MutableConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
-import org.springframework.cache.interceptor.AbstractCacheResolver;
-import org.springframework.cache.interceptor.CacheOperationInvocationContext;
-import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Primary;
 
 @Configuration
 @EnableCaching
@@ -53,6 +51,15 @@ public class CacheManagerConfig extends CachingConfigurerSupport {
             .expireAfterWrite(10, TimeUnit.SECONDS));
     return cmgr;
   }
+
+  @Bean
+  public Cache<String, ListWrapper> cacheContext(){
+    javax.cache.Cache<String, ListWrapper> cacheInstance = Caching.getCachingProvider(
+        CaffeineCachingProvider.class.getName()).getCacheManager().createCache("CachedCommand", new MutableConfiguration<>());
+//        .getCache("newKidCache", String.class, ListWrapper.class);
+    return Cache.of(cacheInstance);
+  }
+
 
 //    @Bean
 //    @Primary

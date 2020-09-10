@@ -40,9 +40,9 @@ public class CommandF {
 
   }
 
-  public Future<List<String>> fallback(Throwable t) {
+  public CompletableFuture<List<String>> fallback(Throwable t) {
     logger.error("from fallback", t);
-    return new FutureTask<List<String>>(Collections::emptyList);
+    return CompletableFuture.supplyAsync(Collections::emptyList);
   }
 
   private List<String> doSomething(String appToken){
